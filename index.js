@@ -11,12 +11,16 @@ class Log {
 
   static pref() {
 
-    let pref = `[${Colors.yellow( process.env.LOG_NAME )}]` ;
+    let pref = '';
+
+		if ( process.env.LOG_NAME ) {
+			pref = `[${Colors.yellow( process.env.LOG_NAME )}]`;
+		}
 
     if ( process.env.LOG_TIME == "yes" ) {
       pref += `${Colors.bold( this.now() ) }` + '.';
     } else {
-      pref += '.';
+      pref = pref.length ? pref+'.' : '';
     }
 
     return pref;
