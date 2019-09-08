@@ -1,0 +1,23 @@
+{
+  "name": "@lromeraj/log",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lromeraj/node-log.git"
+  },
+  "author": "@lromeraj",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lromeraj/node-log/issues"
+  },
+  "homepage": "https://github.com/lromeraj/node-log#readme",
+  "dependencies": {
+    "colors": "^1.3.3",
+    "moment": "^2.24.0"
+  }
+}
