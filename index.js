@@ -27,7 +27,7 @@ class Log {
   }
 
   static error( msg ) {
-    console.log(`${this.pref()}${Colors.red( 'error' )}: ${msg}`);
+    process.stderr.write(`${this.pref()}${Colors.bold.red( 'error' )}: ${msg}`);
   }
 
   static param( attr, val ) {
@@ -35,15 +35,15 @@ class Log {
   }
 
   static info( msg ) {
-    console.log(`${Log.pref()}${Colors.cyan( 'info' )}: ${msg}`);
+    process.stdout.write(`${Log.pref()}${Colors.bold.cyan( 'info' )}: ${msg}`);
   }
 
   static warn( msg ) {
-    console.log(`${Log.pref()}${Colors.yellow( 'warn' )}: ${msg}`);
+    process.stdout.write(`${Log.pref()}${Colors.bold.yellow( 'warn' )}: ${msg}`);
   }
 
   static success( msg ) {
-    console.log(`${Log.pref()}${Colors.green( 'success' )}: ${msg}`)
+    process.stdout.write(`${Log.pref()}${Colors.bold.green( 'success' )}: ${msg}`)
   }
 
 }
