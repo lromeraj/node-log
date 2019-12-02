@@ -18,7 +18,7 @@ class Log {
 		}
 
     if ( process.env.LOG_TIME == "yes" ) {
-      pref += `${Colors.bold( this.now() ) }` + '.';
+      pref += `${this.now()}` + '.';
     } else {
       pref = pref.length ? pref+'.' : '';
     }
