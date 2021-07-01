@@ -1,24 +1,52 @@
+const util = require('util');
 const moment = require('moment');
 const Colors = require('colors/safe');
 
 // simple log functions
 class Log {
 
-  static now() {
+  constructor( src ) {
+
+    this.name = '';
+    this.log_time = false;
+    this.parent = null;
+    this._suffix = ''; 
+    
+    this.middleware = function( stream, str ) {
+      stream.write( str );
+    };
+
+    this.getPrefix = function() { return ""; };
+
+    Object.assign( this, src );
+    
+  }
+
+  now() {
     let mom = moment();
     return `${mom.format('DD/MM/YYYY HH:mm:ss')}`;
   }
 
-  static pref() {
+  subLog() {
+    return new Log({
+      name: this.name
+    })
+  }
+
+  addSuffixer( name, suffixer ) {
+    this[ '_'+name ] = suffixer.bind( this );
+  }
+
+  prefix() {
 
     let pref = '';
 
-		if ( process.env.LOG_NAME ) {
-			pref = `[${Colors.yellow( process.env.LOG_NAME )}]`;
-		}
+		if ( this.name.length ) {
+			pref = `[${Colors.yellow( this.name )}]`;
+    }
 
-    if ( process.env.LOG_TIME == "yes" ) {
-     pref += `[${Colors.cyan(this.now())}]` + '.';
+    if ( this.log_time ) {
+      pref += `[${Colors.cyan(this.now())}]` + '.';
     } else {
       pref = pref.length ? pref+'.' : '';
     }
@@ -26,24 +54,52 @@ class Log {
     return pref;
   }
 
-  static error( msg ) {
-    process.stderr.write(`${this.pref()}${Colors.bold.red( 'error' )}: ${msg}`);
+  suffix() {
+    let suff = this._suffix;
+    this._suffix = '';
+    return suff;
   }
 
-  static param( attr, val ) {
+  attachMiddleware( middleware ) {
+    this.middleware = middleware;
+  }
+
+  msg( msg ) {
+    return this.getPrefix() + msg;  
+  }
+
+  json( obj ) {
+    return util.inspect( obj, {colors: true, compact: false} ) ;
+  }
+
+  error( msg ) {
+    this.middleware( process.stderr, 
+        `${this.prefix() + Colors.bold.red( 'error' )}: ${this.suffix()}${this.msg( msg )}` );
+  }
+
+  param( attr, val ) {
     Log.info( Colors.magenta( attr ) + ': ' + val );
   }
 
-  static info( msg ) {
-    process.stdout.write(`${Log.pref()}${Colors.bold.cyan( 'info' )}: ${msg}`);
+  raw( str ) {
+    this.middleware( process.stdout,
+      str      
+    );
   }
 
-  static warn( msg ) {
-    process.stdout.write(`${Log.pref()}${Colors.bold.yellow( 'warn' )}: ${msg}`);
+  info( msg ) {
+    this.middleware( process.stdout, 
+      `${this.prefix()}${Colors.bold.cyan( 'info' )}: ${this.suffix()}${this.msg( msg )}` );
   }
 
-  static success( msg ) {
-    process.stdout.write(`${Log.pref()}${Colors.bold.green( 'success' )}: ${msg}`)
+  warn( msg ) {
+    this.middleware( process.stdout, 
+      `${this.prefix()}${Colors.bold.yellow( 'warn' )}: ${this.suffix()}${this.msg( msg )}` );
+  }
+
+  success( msg ) {
+    this.middleware( process.stdout,
+      `${this.prefix()}${Colors.bold.green( 'success' )}: ${this.suffix()}${this.msg( msg )}` )
   }
 
 }
